@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+.next/
+.env
+.env.local
+__pycache__/
+*.pyc
+.venv/
+data/raw/*
+!data/raw/.gitkeep
+*.log
+.DS_Store
+coverage/
+database/generated/

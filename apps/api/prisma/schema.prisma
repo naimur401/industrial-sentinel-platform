@@ -1,0 +1,215 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrgStatus {
+  ACTIVE
+  SUSPENDED
+  ARCHIVED
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  LOCKED
+}
+
+enum FacilityStatus {
+  ACTIVE
+  MAINTENANCE
+  OFFLINE
+}
+
+enum AssetType {
+  PUMP
+  MOTOR
+  COMPRESSOR
+  TANK
+  PIPELINE
+}
+
+enum Criticality {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AssetStatus {
+  OPERATIONAL
+  DEGRADED
+  MAINTENANCE
+  OFFLINE
+  ARCHIVED
+}
+
+enum IncidentStatus {
+  DETECTED
+  INVESTIGATING
+  RESOLVED
+  CLOSED
+}
+
+enum IncidentCategory {
+  SECURITY
+  OPERATIONAL
+  INFRASTRUCTURE
+  MAINTENANCE
+}
+
+model Organization {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String    @unique
+  status    OrgStatus @default(ACTIVE)
+  timezone  String    @default("UTC")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  users      User[]
+  roles      Role[]
+  facilities Facility[]
+
+  @@map("organizations")
+}
+
+model User {
+  id             String     @id @default(uuid()) @db.Uuid
+  organizationId String     @map("organization_id") @db.Uuid
+  name           String
+  email          String     @unique
+  passwordHash   String     @map("password_hash")
+  status         UserStatus @default(ACTIVE)
+  mfaEnabled     Boolean    @default(false) @map("mfa_enabled")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userRoles    UserRole[]
+
+  @@index([organizationId])
+  @@map("users")
+}
+
+model Role {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  name           String
+  isSystem       Boolean  @default(false) @map("is_system")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
+
+  @@unique([organizationId, name])
+  @@map("roles")
+}
+
+model Permission {
+  id       String @id @default(uuid()) @db.Uuid
+  resource String
+  action   String
+
+  rolePermissions RolePermission[]
+
+  @@unique([resource, action])
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String @map("role_id") @db.Uuid
+  permissionId String @map("permission_id") @db.Uuid
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model UserRole {
+  userId String @map("user_id") @db.Uuid
+  roleId String @map("role_id") @db.Uuid
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model Facility {
+  id             String         @id @default(uuid()) @db.Uuid
+  organizationId String         @map("organization_id") @db.Uuid
+  name           String
+  location       String
+  status         FacilityStatus @default(ACTIVE)
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assets       Asset[]
+  incidents    Incident[]
+
+  @@index([organizationId])
+  @@map("facilities")
+}
+
+model Asset {
+  id               String      @id @default(uuid()) @db.Uuid
+  facilityId       String      @map("facility_id") @db.Uuid
+  name             String
+  type             AssetType
+  criticality      Criticality @default(MEDIUM)
+  status           AssetStatus @default(OPERATIONAL)
+  location         String?
+  installationDate DateTime?   @map("installation_date")
+  metadata         Json?
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+
+  facility Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  predictions Prediction[]
+
+  @@index([facilityId])
+  @@index([type])
+  @@map("assets")
+}
+
+model Prediction {
+  id                   String   @id @default(uuid()) @db.Uuid
+  assetId              String   @map("asset_id") @db.Uuid
+  remainingUsefulLife  Float    @map("remaining_useful_life")
+  failureProbability   Float    @map("failure_probability")
+  confidence           Float
+  recommendation       String
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
+  @@map("predictions")
+}
+
+model Incident {
+  id          String           @id @default(uuid()) @db.Uuid
+  facilityId  String           @map("facility_id") @db.Uuid
+  title       String
+  description String?
+  severity    Criticality      @default(MEDIUM)
+  status      IncidentStatus   @default(DETECTED)
+  category    IncidentCategory @default(OPERATIONAL)
+  assigneeId  String?          @map("assignee_id") @db.Uuid
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  facility Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+
+  @@index([facilityId])
+  @@map("incidents")
+}
