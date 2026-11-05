@@ -78,9 +78,7 @@ export default function IncidentsPage() {
           <Link href="/ai" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
             <Activity className="w-5 h-5 mr-3" /> AI Intelligence
           </Link>
-          <a href="#" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
-            <Shield className="w-5 h-5 mr-3" /> Security
-          </a>
+          <a href="/security" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors"><Shield className="w-5 h-5 mr-3" /> Security</a>
           <Link href="/incidents" className="flex items-center px-4 py-2.5 bg-blue-500/10 text-blue-400 rounded-lg">
             <AlertTriangle className="w-5 h-5 mr-3" /> Incidents
           </Link>
@@ -177,3 +175,4 @@ export default function IncidentsPage() {
     </div>
   );
 }
+

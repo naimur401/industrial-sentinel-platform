@@ -75,15 +75,15 @@ export default function AssetsPage() {
           <Link href="/assets" className="flex items-center px-4 py-2.5 bg-blue-500/10 text-blue-400 rounded-lg">
             <Server className="w-5 h-5 mr-3" /> Assets
           </Link>
-          <a href="#" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+          <Link href="/ai" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
             <Activity className="w-5 h-5 mr-3" /> AI Intelligence
-          </a>
-          <a href="#" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+          </Link>
+          <Link href="/security" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
             <Shield className="w-5 h-5 mr-3" /> Security
-          </a>
-          <a href="#" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+          </Link>
+          <Link href="/incidents" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
             <AlertTriangle className="w-5 h-5 mr-3" /> Incidents
-          </a>
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-slate-800">
@@ -172,3 +172,4 @@ export default function AssetsPage() {
     </div>
   );
 }
+

@@ -7,9 +7,10 @@ import { UsersModule } from './users/users.module';
 import { AssetsModule } from './assets/assets.module';
 import { AiModule } from './ai/ai.module';
 import { IncidentsModule } from './incidents/incidents.module';
+import { SecurityModule } from './security/security.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, UsersModule, AssetsModule, AiModule, IncidentsModule],
+  imports: [PrismaModule, AuthModule, UsersModule, AssetsModule, AiModule, IncidentsModule, SecurityModule],
   controllers: [AppController],
   providers: [AppService],
 })
