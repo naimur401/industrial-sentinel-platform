@@ -189,6 +189,7 @@ model Asset {
 
   facility Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
   predictions Prediction[]
+  sensors     Sensor[]
 
   @@index([facilityId])
   @@index([type])
@@ -239,4 +240,47 @@ model ThreatEvent {
   createdAt     DateTime       @default(now()) @map("created_at")
 
   @@map("threat_events")
+}
+
+model Sensor {
+  id         String   @id @default(uuid()) @db.Uuid
+  assetId    String   @map("asset_id") @db.Uuid
+  sensorType String   @map("sensor_type")
+  unit       String
+  threshold  Float?
+  status     String   @default("ACTIVE")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  asset     Asset           @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  anomalies Anomaly[]
+  readings  SensorReading[]
+
+  @@index([assetId])
+  @@map("sensors")
+}
+
+model Anomaly {
+  id          String      @id @default(uuid()) @db.Uuid
+  sensorId    String      @map("sensor_id") @db.Uuid
+  score       Float
+  severity    Criticality @default(MEDIUM)
+  description String?
+  detectedAt  DateTime    @default(now()) @map("detected_at")
+
+  sensor Sensor @relation(fields: [sensorId], references: [id], onDelete: Cascade)
+
+  @@index([sensorId])
+  @@map("anomalies")
+}
+
+model SensorReading {
+  id        String   @id @default(uuid()) @db.Uuid
+  sensorId  String   @map("sensor_id") @db.Uuid
+  value     Float
+  timestamp DateTime @default(now())
+
+  sensor Sensor @relation(fields: [sensorId], references: [id], onDelete: Cascade)
+
+  @@index([sensorId, timestamp])
+  @@map("sensor_readings")
 }

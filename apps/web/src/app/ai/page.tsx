@@ -66,8 +66,12 @@ export default function AIOverviewPage() {
           <Link href="/ai" className="flex items-center px-4 py-2.5 bg-blue-500/10 text-blue-400 rounded-lg">
             <Activity className="w-5 h-5 mr-3" /> AI Intelligence
           </Link>
-          <a href="/security" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors"><Shield className="w-5 h-5 mr-3" /> Security</a>
-          <a href="/incidents" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors"><AlertTriangle className="w-5 h-5 mr-3" /> Incidents</a>
+          <Link href="/security" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+            <Shield className="w-5 h-5 mr-3" /> Security
+          </Link>
+          <Link href="/incidents" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+            <AlertTriangle className="w-5 h-5 mr-3" /> Incidents
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-slate-800">
@@ -95,7 +99,6 @@ export default function AIOverviewPage() {
         </header>
 
         <main className="flex-1 overflow-auto p-6">
-          {/* AI Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div className="p-6 bg-slate-900 rounded-xl border border-slate-800 flex items-center space-x-4">
               <div className="p-3 bg-purple-500/10 rounded-lg">
@@ -126,13 +129,17 @@ export default function AIOverviewPage() {
             </div>
           </div>
 
-          {/* Latest Predictions Table */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
             <div className="p-4 border-b border-slate-800 flex justify-between items-center">
               <h2 className="text-lg font-medium text-white">Latest AI Predictions</h2>
-              <Link href="/ai/predictive-maintenance" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors">
-                View Predictive Maintenance
-              </Link>
+              <div className="flex space-x-2">
+                <Link href="/ai/predictive-maintenance" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors">
+                  View Predictive Maintenance
+                </Link>
+                <Link href="/ai/anomalies" className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium rounded-lg transition-colors">
+                  View Anomaly Detection
+                </Link>
+              </div>
             </div>
 
             <div className="overflow-x-auto">
@@ -179,4 +186,3 @@ export default function AIOverviewPage() {
     </div>
   );
 }
-

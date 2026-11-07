@@ -5,6 +5,29 @@ import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { LayoutDashboard, Shield, AlertTriangle, Activity, Server, Bell, LogOut } from 'lucide-react';
+import Link from 'next/link';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
+// Demo data for charts
+const assetHealthData = [
+  { name: 'Mon', health: 85 },
+  { name: 'Tue', health: 88 },
+  { name: 'Wed', health: 82 },
+  { name: 'Thu', health: 90 },
+  { name: 'Fri', health: 78 },
+  { name: 'Sat', health: 85 },
+  { name: 'Sun', health: 92 },
+];
+
+const threatActivityData = [
+  { name: 'Mon', threats: 12 },
+  { name: 'Tue', threats: 19 },
+  { name: 'Wed', threats: 8 },
+  { name: 'Thu', threats: 25 },
+  { name: 'Fri', threats: 14 },
+  { name: 'Sat', threats: 7 },
+  { name: 'Sun', threats: 10 },
+];
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -57,21 +80,21 @@ export default function DashboardPage() {
         </div>
         
         <nav className="flex-1 p-4 space-y-2">
-          <a href="/dashboard" className="flex items-center px-4 py-2.5 bg-blue-500/10 text-blue-400 rounded-lg">
+          <Link href="/dashboard" className="flex items-center px-4 py-2.5 bg-blue-500/10 text-blue-400 rounded-lg">
             <LayoutDashboard className="w-5 h-5 mr-3" /> Overview
-          </a>
-          <a href="/assets" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+          </Link>
+          <Link href="/assets" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
             <Server className="w-5 h-5 mr-3" /> Assets
-          </a>
-          <a href="/ai" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+          </Link>
+          <Link href="/ai" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
             <Activity className="w-5 h-5 mr-3" /> AI Intelligence
-          </a>
-          <a href="/security" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+          </Link>
+          <Link href="/security" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
             <Shield className="w-5 h-5 mr-3" /> Security
-          </a>
-          <a href="/incidents" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+          </Link>
+          <Link href="/incidents" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
             <AlertTriangle className="w-5 h-5 mr-3" /> Incidents
-          </a>
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-slate-800">
@@ -120,16 +143,42 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Asset Health Trends Chart */}
             <div className="p-6 bg-slate-900 rounded-xl border border-slate-800 h-96 flex flex-col">
               <h2 className="text-lg font-medium text-white mb-4">Asset Health Trends</h2>
-              <div className="flex-1 flex items-center justify-center text-slate-500 border-2 border-dashed border-slate-800 rounded-lg">
-                Chart Placeholder (Recharts)
+              <div className="flex-1 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={assetHealthData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                    <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
+                    <YAxis stroke="#64748b" fontSize={12} domain={[0, 100]} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }} 
+                      itemStyle={{ color: '#3b82f6' }}
+                    />
+                    <Line type="monotone" dataKey="health" stroke="#3b82f6" strokeWidth={3} dot={{ fill: '#3b82f6', r: 4 }} activeDot={{ r: 8 }} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
+
+            {/* Threat Activity Chart */}
             <div className="p-6 bg-slate-900 rounded-xl border border-slate-800 h-96 flex flex-col">
               <h2 className="text-lg font-medium text-white mb-4">Threat Activity</h2>
-              <div className="flex-1 flex items-center justify-center text-slate-500 border-2 border-dashed border-slate-800 rounded-lg">
-                Chart Placeholder (Recharts)
+              <div className="flex-1 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={threatActivityData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                    <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
+                    <YAxis stroke="#64748b" fontSize={12} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }} 
+                      itemStyle={{ color: '#ef4444' }}
+                      cursor={{ fill: '#1e293b' }}
+                    />
+                    <Bar dataKey="threats" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>
@@ -138,4 +187,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
