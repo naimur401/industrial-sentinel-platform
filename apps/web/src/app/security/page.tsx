@@ -131,7 +131,7 @@ export default function SecurityOverviewPage() {
 
           <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
             <div className="p-4 border-b border-slate-800 flex justify-between items-center">
-              <h2 className="text-lg font-medium text-white">Recent Threat Events</h2>
+              <div className="flex justify-between items-center"><h2 className="text-lg font-medium text-white">Recent Threat Events</h2><Link href="/security/threats" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors">View All Threats</Link></div>
               <div className="relative w-64">
                 <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
                 <input type="text" placeholder="Search threats..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:ring-1 focus:ring-blue-500 outline-none" />
@@ -193,3 +193,4 @@ export default function SecurityOverviewPage() {
     </div>
   );
 }
+

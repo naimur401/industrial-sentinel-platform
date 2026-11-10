@@ -101,7 +101,7 @@ function SensorDetailsContent() {
                 <YAxis stroke="#64748b" fontSize={12} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }} 
-                  labelFormatter={(label) => new Date(label).toLocaleString()}
+                  labelFormatter={(label) => new Date(label as string).toLocaleString()}
                 />
                 <ReferenceLine y={sensor.threshold} label="Threshold" stroke="#ef4444" strokeDasharray="5 5" />
                 <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} dot={false} />
@@ -138,7 +138,7 @@ function SensorDetailsContent() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-slate-400">{anomaly.description}</td>
-                    <td className="px-6 py-4 text-slate-400">{new Date(anomaly.detectedAt).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-slate-400">{new Date(anomaly.detectedAt as string).toLocaleDateString()}</td>
                   </tr>
                 ))}
                 {sensor.anomalies.length === 0 && (
@@ -161,3 +161,6 @@ export default function SensorDetailsPage() {
     </Suspense>
   );
 }
+
+
+

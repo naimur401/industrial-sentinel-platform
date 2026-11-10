@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   postgres:
     image: timescale/timescaledb:latest-pg16
@@ -16,7 +17,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
   redis:
     image: redis:7-alpine
     container_name: sentinel-redis
@@ -30,7 +30,45 @@ services:
       interval: 10s
       timeout: 3s
       retries: 5
-
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: sentinel-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://sentinel:sentinel_dev_pw@postgres:5432/sentinel?schema=public
+      JWT_SECRET: super_secret_jwt_key_change_me_in_production
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: sentinel-web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3000
+    ports:
+      - "3001:3000"
+    depends_on:
+      - api
+  ai-engine:
+    build:
+      context: ./services/ai-engine
+      dockerfile: Dockerfile
+    container_name: sentinel-ai
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      - api
 volumes:
   pgdata:
   redisdata:
