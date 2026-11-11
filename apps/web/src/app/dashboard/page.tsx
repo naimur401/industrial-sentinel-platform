@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import { LayoutDashboard, Shield, AlertTriangle, Activity, Server, Bell, LogOut } from 'lucide-react';
+import { LayoutDashboard, Shield, AlertTriangle, Activity, Server, Bell, LogOut, UserPlus, KeyRound } from 'lucide-react';
 import Link from 'next/link';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -95,6 +95,15 @@ export default function DashboardPage() {
           <Link href="/incidents" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
             <AlertTriangle className="w-5 h-5 mr-3" /> Incidents
           </Link>
+          <div className="pt-4 mt-4 border-t border-slate-800">
+            <p className="px-4 text-xs text-slate-500 uppercase tracking-wider mb-2">Administration</p>
+            <Link href="/admin/users" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+              <UserPlus className="w-5 h-5 mr-3" /> User Management
+            </Link>
+            <Link href="/admin/roles" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+              <KeyRound className="w-5 h-5 mr-3" /> Role Management
+            </Link>
+          </div>
         </nav>
 
         <div className="p-4 border-t border-slate-800">
@@ -187,3 +196,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+
