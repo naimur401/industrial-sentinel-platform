@@ -193,6 +193,8 @@ model Asset {
 
   @@index([facilityId])
   @@index([type])
+  maintenanceOrders MaintenanceOrder[]
+
   @@map("assets")
 }
 
@@ -296,3 +298,32 @@ model Notification {
 
   @@map("notifications")
 }
+
+enum WorkOrderStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+  CANCELLED
+}
+
+model MaintenanceOrder {
+  id          String          @id @default(uuid()) @db.Uuid
+  assetId     String          @map("asset_id") @db.Uuid
+  title       String
+  description String?
+  status      WorkOrderStatus @default(OPEN)
+  priority    Criticality     @default(MEDIUM)
+  dueDate     DateTime?       @map("due_date")
+  assignedTo  String?         @map("assigned_to")
+  completedAt DateTime?       @map("completed_at")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@map("maintenance_orders")
+}
+
+
+
