@@ -284,3 +284,15 @@ model SensorReading {
   @@index([sensorId, timestamp])
   @@map("sensor_readings")
 }
+
+model Notification {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  title     String
+  message   String
+  severity  Criticality @default(MEDIUM)
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("notifications")
+}

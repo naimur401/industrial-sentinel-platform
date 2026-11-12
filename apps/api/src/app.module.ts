@@ -9,9 +9,12 @@ import { AiModule } from './ai/ai.module';
 import { IncidentsModule } from './incidents/incidents.module';
 import { SecurityModule } from './security/security.module';
 import { SensorsModule } from './sensors/sensors.module';
+import { FacilitiesModule } from './facilities/facilities.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, UsersModule, AssetsModule, AiModule, IncidentsModule, SecurityModule, SensorsModule],
+  imports: [PrismaModule, AuthModule, UsersModule, AssetsModule, AiModule, IncidentsModule, SecurityModule, SensorsModule, FacilitiesModule, NotificationsModule, ReportsModule],
   controllers: [AppController],
   providers: [AppService],
 })

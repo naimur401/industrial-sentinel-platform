@@ -4,11 +4,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import { LayoutDashboard, Shield, AlertTriangle, Activity, Server, Bell, LogOut, UserPlus, KeyRound } from 'lucide-react';
+import { LayoutDashboard, Shield, AlertTriangle, Activity, Server, Bell, LogOut, UserPlus, KeyRound, Building2, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-// Demo data for charts
 const assetHealthData = [
   { name: 'Mon', health: 85 },
   { name: 'Tue', health: 88 },
@@ -72,14 +71,13 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-screen bg-slate-950 text-slate-300">
-      {/* Sidebar */}
       <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col">
         <div className="h-16 flex items-center px-6 border-b border-slate-800">
           <Shield className="w-8 h-8 text-blue-500 mr-3" />
           <span className="text-white font-bold text-lg tracking-tight">Sentinel</span>
         </div>
         
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           <Link href="/dashboard" className="flex items-center px-4 py-2.5 bg-blue-500/10 text-blue-400 rounded-lg">
             <LayoutDashboard className="w-5 h-5 mr-3" /> Overview
           </Link>
@@ -95,6 +93,12 @@ export default function DashboardPage() {
           <Link href="/incidents" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
             <AlertTriangle className="w-5 h-5 mr-3" /> Incidents
           </Link>
+          <Link href="/notifications" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+            <Bell className="w-5 h-5 mr-3" /> Notifications
+          </Link>
+          <Link href="/reports" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+            <FileText className="w-5 h-5 mr-3" /> Reports
+          </Link>
           <div className="pt-4 mt-4 border-t border-slate-800">
             <p className="px-4 text-xs text-slate-500 uppercase tracking-wider mb-2">Administration</p>
             <Link href="/admin/users" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
@@ -102,6 +106,9 @@ export default function DashboardPage() {
             </Link>
             <Link href="/admin/roles" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
               <KeyRound className="w-5 h-5 mr-3" /> Role Management
+            </Link>
+            <Link href="/admin/facilities" className="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors">
+              <Building2 className="w-5 h-5 mr-3" /> Facility Management
             </Link>
           </div>
         </nav>
@@ -113,7 +120,6 @@ export default function DashboardPage() {
         </div>
       </aside>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6">
           <h1 className="text-xl font-semibold text-white">Executive Overview</h1>
@@ -152,7 +158,6 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Asset Health Trends Chart */}
             <div className="p-6 bg-slate-900 rounded-xl border border-slate-800 h-96 flex flex-col">
               <h2 className="text-lg font-medium text-white mb-4">Asset Health Trends</h2>
               <div className="flex-1 w-full">
@@ -171,7 +176,6 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Threat Activity Chart */}
             <div className="p-6 bg-slate-900 rounded-xl border border-slate-800 h-96 flex flex-col">
               <h2 className="text-lg font-medium text-white mb-4">Threat Activity</h2>
               <div className="flex-1 w-full">
@@ -196,5 +200,4 @@ export default function DashboardPage() {
     </div>
   );
 }
-
 
