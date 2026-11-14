@@ -327,3 +327,13 @@ model MaintenanceOrder {
 
 
 
+
+model IncidentEvent {
+  id          String   @id @default(uuid()) @db.Uuid
+  incidentId  String   @map("incident_id") @db.Uuid
+  eventType   String   @map("event_type")
+  description String
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("incident_events")
+}

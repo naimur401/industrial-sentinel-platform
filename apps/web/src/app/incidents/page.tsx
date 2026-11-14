@@ -134,7 +134,7 @@ export default function IncidentsPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-800/50">
                   {filteredIncidents.map((inc) => (
-                    <tr key={inc.id} className="hover:bg-slate-800/30 transition-colors">
+                    <tr key={inc.id} onClick={() => router.push('/incidents/' + inc.id)} className="hover:bg-slate-800/30 transition-colors cursor-pointer">
                       <td className="px-6 py-4 text-white font-medium">{inc.title}</td>
                       <td className="px-6 py-4 text-slate-400">{inc.category}</td>
                       <td className="px-6 py-4 text-slate-400">{inc.facility.name}</td>
@@ -175,4 +175,5 @@ export default function IncidentsPage() {
     </div>
   );
 }
+
 
