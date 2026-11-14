@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import { LayoutDashboard, Shield, AlertTriangle, Activity, Server, Bell, LogOut, UserPlus, KeyRound, Building2, FileText, Wrench } from 'lucide-react';
+import { LayoutDashboard, Shield, AlertTriangle, Activity, Server, Bell, LogOut, UserPlus, KeyRound, Building2, FileText, Wrench, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+
+const COLORS = ['#ef4444', '#f97316', '#eab308', '#3b82f6'];
 
 const assetHealthData = [
   { name: 'Mon', health: 85 },
@@ -32,6 +34,9 @@ export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState({ totalAssets: 0, totalFacilities: 0 });
+  const [criticalityData, setCriticalityData] = useState<any[]>([]);
+  const [recentActivity, setRecentActivity] = useState<any>({ incidents: [], threats: [], maintenance: [] });
+  const [aiRisk, setAiRisk] = useState<any>({ avgRUL: 0, highRiskCount: 0, totalPredictions: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -45,20 +50,28 @@ export default function DashboardPage() {
 
     if (userData) setUser(JSON.parse(userData));
 
-    const fetchStats = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/assets/stats', {
-          headers: { Authorization: 'Bearer ' + token }
-        });
-        setStats(res.data);
+        const headers = { Authorization: 'Bearer ' + token };
+        const [statsRes, critRes, activityRes, aiRes] = await Promise.all([
+          axios.get('http://localhost:3000/assets/stats', { headers }),
+          axios.get('http://localhost:3000/assets/criticality-distribution', { headers }),
+          axios.get('http://localhost:3000/assets/recent-activity', { headers }),
+          axios.get('http://localhost:3000/assets/ai-risk-summary', { headers }),
+        ]);
+        
+        setStats(statsRes.data);
+        setCriticalityData(critRes.data.map((d: any) => ({ name: d.criticality, value: d._count })));
+        setRecentActivity(activityRes.data);
+        setAiRisk(aiRes.data);
       } catch (err) {
-        console.error('Failed to fetch stats', err);
+        console.error('Failed to fetch dashboard data', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStats();
+    fetchData();
   }, [router]);
 
   const handleLogout = () => {
@@ -68,6 +81,19 @@ export default function DashboardPage() {
   };
 
   if (!user || loading) return <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">Loading dashboard...</div>;
+
+  const timeline: any[] = [];
+  recentActivity.incidents?.forEach((i: any) => timeline.push({ 
+    type: 'incident', title: i.title, severity: i.severity, time: i.createdAt, icon: AlertTriangle, color: 'text-yellow-400' 
+  }));
+  recentActivity.threats?.forEach((t: any) => timeline.push({ 
+    type: 'threat', title: t.eventType, severity: t.severity, time: t.createdAt, icon: Shield, color: 'text-red-400' 
+  }));
+  recentActivity.maintenance?.forEach((m: any) => timeline.push({ 
+    type: 'maintenance', title: m.title, severity: m.priority, time: m.createdAt, icon: Wrench, color: 'text-blue-400' 
+  }));
+  timeline.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+  const recentTimeline = timeline.slice(0, 5);
 
   return (
     <div className="flex h-screen bg-slate-950 text-slate-300">
@@ -151,17 +177,17 @@ export default function DashboardPage() {
               <p className="text-3xl font-bold text-white">{stats.totalAssets}</p>
             </div>
             <div className="p-6 bg-slate-900 rounded-xl border border-slate-800">
-              <p className="text-sm text-slate-400 mb-1">Critical Alerts</p>
-              <p className="text-3xl font-bold text-red-500">3</p>
+              <p className="text-sm text-slate-400 mb-1">Avg Asset RUL</p>
+              <p className="text-3xl font-bold text-blue-400">{aiRisk.avgRUL} <span className="text-sm">days</span></p>
             </div>
             <div className="p-6 bg-slate-900 rounded-xl border border-slate-800">
-              <p className="text-sm text-slate-400 mb-1">Open Incidents</p>
-              <p className="text-3xl font-bold text-yellow-500">7</p>
+              <p className="text-sm text-slate-400 mb-1">High Risk Assets</p>
+              <p className="text-3xl font-bold text-red-500">{aiRisk.highRiskCount}</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="p-6 bg-slate-900 rounded-xl border border-slate-800 h-96 flex flex-col">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <div className="p-6 bg-slate-900 rounded-xl border border-slate-800 h-80 flex flex-col">
               <h2 className="text-lg font-medium text-white mb-4">Asset Health Trends</h2>
               <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -169,17 +195,14 @@ export default function DashboardPage() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                     <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
                     <YAxis stroke="#64748b" fontSize={12} domain={[0, 100]} />
-                    <Tooltip 
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }} 
-                      itemStyle={{ color: '#3b82f6' }}
-                    />
-                    <Line type="monotone" dataKey="health" stroke="#3b82f6" strokeWidth={3} dot={{ fill: '#3b82f6', r: 4 }} activeDot={{ r: 8 }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }} />
+                    <Line type="monotone" dataKey="health" stroke="#3b82f6" strokeWidth={3} dot={{ fill: '#3b82f6', r: 4 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            <div className="p-6 bg-slate-900 rounded-xl border border-slate-800 h-96 flex flex-col">
+            <div className="p-6 bg-slate-900 rounded-xl border border-slate-800 h-80 flex flex-col">
               <h2 className="text-lg font-medium text-white mb-4">Threat Activity</h2>
               <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -187,14 +210,77 @@ export default function DashboardPage() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                     <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
                     <YAxis stroke="#64748b" fontSize={12} />
-                    <Tooltip 
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }} 
-                      itemStyle={{ color: '#ef4444' }}
-                      cursor={{ fill: '#1e293b' }}
-                    />
+                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }} cursor={{ fill: '#1e293b' }} />
                     <Bar dataKey="threats" fill="#ef4444" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-900 rounded-xl border border-slate-800 h-80 flex flex-col">
+              <h2 className="text-lg font-medium text-white mb-4">Asset Criticality</h2>
+              <div className="flex-1 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={criticalityData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={4} dataKey="value">
+                      {criticalityData.map((entry, index) => (
+                        <Cell key={'cell-' + index} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }} />
+                    <Legend wrapperStyle={{ fontSize: '12px', color: '#94a3b8' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 p-6 bg-slate-900 rounded-xl border border-slate-800">
+              <h2 className="text-lg font-medium text-white mb-4">Recent Activity</h2>
+              <div className="space-y-3">
+                {recentTimeline.map((item, i) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={i} className="flex items-start space-x-3 p-3 bg-slate-950/50 rounded-lg border border-slate-800/50">
+                      <div className={'p-2 rounded-lg ' + (item.type === 'threat' ? 'bg-red-500/10' : item.type === 'incident' ? 'bg-yellow-500/10' : 'bg-blue-500/10')}>
+                        <Icon className={'w-4 h-4 ' + item.color} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm text-white font-medium">{item.title}</p>
+                        <p className="text-xs text-slate-500">{new Date(item.time).toLocaleString()}</p>
+                      </div>
+                      <span className={
+                        item.severity === 'CRITICAL' ? 'text-red-400 bg-red-400/10 px-2 py-0.5 rounded text-xs border border-red-400/20' :
+                        item.severity === 'HIGH' ? 'text-orange-400 bg-orange-400/10 px-2 py-0.5 rounded text-xs border border-orange-400/20' :
+                        'text-slate-400 bg-slate-800 px-2 py-0.5 rounded text-xs'
+                      }>
+                        {item.severity}
+                      </span>
+                    </div>
+                  );
+                })}
+                {recentTimeline.length === 0 && (
+                  <p className="text-center text-slate-500 py-4">No recent activity</p>
+                )}
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-900 rounded-xl border border-slate-800">
+              <h2 className="text-lg font-medium text-white mb-4">Quick Actions</h2>
+              <div className="space-y-2">
+                <Link href="/assets/add" className="flex items-center px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors">
+                  <Plus className="w-4 h-4 mr-2" /> Add New Asset
+                </Link>
+                <Link href="/maintenance" className="flex items-center px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors">
+                  <Wrench className="w-4 h-4 mr-2" /> Create Work Order
+                </Link>
+                <Link href="/incidents" className="flex items-center px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors">
+                  <AlertTriangle className="w-4 h-4 mr-2" /> View Incidents
+                </Link>
+                <Link href="/security/threats" className="flex items-center px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors">
+                  <Shield className="w-4 h-4 mr-2" /> View Threats
+                </Link>
               </div>
             </div>
           </div>
@@ -203,5 +289,4 @@ export default function DashboardPage() {
     </div>
   );
 }
-
 

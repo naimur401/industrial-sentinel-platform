@@ -15,6 +15,21 @@ export class AssetsController {
     return this.assetsService.getStats();
   }
 
+  @Get('criticality-distribution')
+  async getCriticalityDistribution() {
+    return this.assetsService.getCriticalityDistribution();
+  }
+
+  @Get('recent-activity')
+  async getRecentActivity() {
+    return this.assetsService.getRecentActivity();
+  }
+
+  @Get('ai-risk-summary')
+  async getAIRiskSummary() {
+    return this.assetsService.getAIRiskSummary();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.assetsService.findOne(id);
