@@ -193,7 +193,7 @@ export default function ThreatEventsPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-800/50">
                   {filteredThreats.map((threat) => (
-                    <tr key={threat.id} className="hover:bg-slate-800/30 transition-colors">
+                    <tr key={threat.id} onClick={() => router.push('/security/threats/' + threat.id)} className="hover:bg-slate-800/30 transition-colors cursor-pointer">
                       <td className="px-6 py-4 text-white font-medium">{threat.eventType}</td>
                       <td className="px-6 py-4 text-slate-400 font-mono text-xs">{threat.sourceIp}</td>
                       <td className="px-6 py-4 text-slate-400 font-mono text-xs">{threat.destinationIp}</td>
@@ -247,3 +247,4 @@ export default function ThreatEventsPage() {
     </div>
   );
 }
+

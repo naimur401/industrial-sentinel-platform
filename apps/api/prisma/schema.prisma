@@ -337,3 +337,29 @@ model IncidentEvent {
 
   @@map("incident_events")
 }
+
+model AccessPolicy {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  description String?
+  resource    String
+  action      String
+  conditions  Json?
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("access_policies")
+}
+
+model AccessDecision {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String?  @map("user_id") @db.Uuid
+  resource   String
+  action     String
+  riskScore  Float    @map("risk_score")
+  decision   String
+  reason     String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("access_decisions")
+}

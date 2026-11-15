@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import { ArrowLeft, AlertTriangle, Clock, MessageSquare, Send, User, Activity } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, Clock, MessageSquare, Send, Activity, CheckCircle, X } from 'lucide-react';
 
 export default function IncidentDetailsPage() {
   const router = useRouter();
@@ -13,6 +13,12 @@ export default function IncidentDetailsPage() {
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [toast, setToast] = useState({ show: false, type: '', message: '' });
+
+  const showToast = (type: string, message: string) => {
+    setToast({ show: true, type, message });
+    setTimeout(() => setToast({ show: false, type: '', message: '' }), 3000);
+  };
 
   const fetchIncident = async () => {
     try {
@@ -47,8 +53,10 @@ export default function IncidentDetailsPage() {
       );
       setComment('');
       await fetchIncident();
+      showToast('success', 'Comment posted successfully!');
     } catch (err) {
       console.error('Failed to add comment', err);
+      showToast('error', 'Failed to post comment.');
     } finally {
       setSubmitting(false);
     }
@@ -62,8 +70,10 @@ export default function IncidentDetailsPage() {
         { headers: { Authorization: 'Bearer ' + token } }
       );
       await fetchIncident();
+      showToast('success', 'Status changed to ' + newStatus);
     } catch (err) {
       console.error('Failed to update status', err);
+      showToast('error', 'Failed to update status.');
     }
   };
 
@@ -74,7 +84,16 @@ export default function IncidentDetailsPage() {
     <div className="min-h-screen bg-slate-950 text-slate-300 p-8 flex justify-center items-start pt-10">
       <div className="w-full max-w-4xl space-y-6">
         
-        {/* Header */}
+        {toast.show && (
+          <div className={'fixed top-6 right-6 z-50 flex items-center px-4 py-3 rounded-lg shadow-lg border ' + (toast.type === 'success' ? 'bg-green-900/50 border-green-500/50 text-green-400' : 'bg-red-900/50 border-red-500/50 text-red-400')}>
+            {toast.type === 'success' ? <CheckCircle className="w-5 h-5 mr-2" /> : <X className="w-5 h-5 mr-2" />}
+            <span className="text-sm font-medium">{toast.message}</span>
+            <button onClick={() => setToast({ show: false, type: '', message: '' })} className="ml-4 text-current opacity-70 hover:opacity-100">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
           <div className="flex items-start justify-between">
             <div className="flex items-start space-x-4">
@@ -113,7 +132,6 @@ export default function IncidentDetailsPage() {
           </div>
         </div>
 
-        {/* Timeline */}
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
           <h2 className="text-lg font-medium text-white mb-4 flex items-center">
             <Clock className="w-5 h-5 mr-2" /> Timeline
@@ -142,7 +160,6 @@ export default function IncidentDetailsPage() {
           </div>
         </div>
 
-        {/* Add Comment */}
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
           <h2 className="text-lg font-medium text-white mb-4 flex items-center">
             <MessageSquare className="w-5 h-5 mr-2" /> Add Investigation Note

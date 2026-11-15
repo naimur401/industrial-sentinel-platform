@@ -24,4 +24,9 @@ export class SecurityController {
   async updateStatus(@Param('id') id: string, @Body('status') status: string) {
     return this.securityService.updateStatus(id, status);
   }
+
+  @Patch('threats/:id/notes')
+  async updateNotes(@Param('id') id: string, @Body('notes') notes: string) {
+    return this.securityService.updateNotes(id, notes);
+  }
 }

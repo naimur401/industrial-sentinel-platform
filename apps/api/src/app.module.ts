@@ -13,9 +13,10 @@ import { FacilitiesModule } from './facilities/facilities.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ReportsModule } from './reports/reports.module';
 import { MaintenanceModule } from './maintenance/maintenance.module';
+import { ZeroTrustModule } from './zero-trust/zero-trust.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, UsersModule, AssetsModule, AiModule, IncidentsModule, SecurityModule, SensorsModule, FacilitiesModule, NotificationsModule, ReportsModule, MaintenanceModule],
+  imports: [PrismaModule, AuthModule, UsersModule, AssetsModule, AiModule, IncidentsModule, SecurityModule, SensorsModule, FacilitiesModule, NotificationsModule, ReportsModule, MaintenanceModule, ZeroTrustModule],
   controllers: [AppController],
   providers: [AppService],
 })

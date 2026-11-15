@@ -30,4 +30,11 @@ export class SecurityService {
       data: { status: status as any },
     });
   }
+
+  async updateNotes(id: string, notes: string) {
+    return this.prisma.threatEvent.update({
+      where: { id },
+      data: { description: notes },
+    });
+  }
 }
