@@ -363,3 +363,16 @@ model AccessDecision {
 
   @@map("access_decisions")
 }
+
+model AuditLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String?  @map("user_id") @db.Uuid
+  action       String
+  resource     String
+  details      String?
+  previousHash String?  @map("previous_hash")
+  entryHash    String   @map("entry_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("audit_logs")
+}
