@@ -40,7 +40,7 @@ export class ZeroTrustService {
     else if (riskScore >= 60) decision = 'REQUIRE_VERIFICATION';
     else if (riskScore >= 30) decision = 'REQUIRE_MFA';
 
-    const accessDecision = await this.prisma.accessDecision.create({
+    return this.prisma.accessDecision.create({
       data: {
         userId,
         resource,
@@ -50,14 +50,47 @@ export class ZeroTrustService {
         reason: 'Risk score based on role, device, location, and time',
       },
     });
-
-    return accessDecision;
   }
 
   async getDecisions() {
     return this.prisma.accessDecision.findMany({
       orderBy: { createdAt: 'desc' },
-      take: 50,
+      take: 100,
+    });
+  }
+
+  async getDecisionStats() {
+    const total = await this.prisma.accessDecision.count();
+    const allow = await this.prisma.accessDecision.count({ where: { decision: 'ALLOW' } });
+    const deny = await this.prisma.accessDecision.count({ where: { decision: 'DENY' } });
+    const requireMfa = await this.prisma.accessDecision.count({ where: { decision: 'REQUIRE_MFA' } });
+    const requireVerification = await this.prisma.accessDecision.count({ where: { decision: 'REQUIRE_VERIFICATION' } });
+    return { total, allow, deny, requireMfa, requireVerification };
+  }
+
+  async getAllDevices() {
+    return this.prisma.device.findMany({
+      orderBy: { lastActivity: 'desc' },
+    });
+  }
+
+  async createDevice(data: any) {
+    return this.prisma.device.create({
+      data: {
+        userId: data.userId,
+        deviceFingerprint: data.deviceFingerprint,
+        name: data.name,
+        os: data.os,
+        browser: data.browser,
+        trustStatus: data.trustStatus || 'UNKNOWN',
+      },
+    });
+  }
+
+  async updateDeviceTrust(id: string, trustStatus: string) {
+    return this.prisma.device.update({
+      where: { id },
+      data: { trustStatus: trustStatus as any, lastActivity: new Date() },
     });
   }
 }

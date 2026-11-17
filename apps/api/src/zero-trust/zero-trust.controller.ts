@@ -29,4 +29,24 @@ export class ZeroTrustController {
   async getDecisions() {
     return this.zeroTrustService.getDecisions();
   }
+
+  @Get('decisions/stats')
+  async getDecisionStats() {
+    return this.zeroTrustService.getDecisionStats();
+  }
+
+  @Get('devices')
+  async getAllDevices() {
+    return this.zeroTrustService.getAllDevices();
+  }
+
+  @Post('devices')
+  async createDevice(@Body() body: any) {
+    return this.zeroTrustService.createDevice(body);
+  }
+
+  @Patch('devices/:id/trust')
+  async updateDeviceTrust(@Param('id') id: string, @Body('trustStatus') trustStatus: string) {
+    return this.zeroTrustService.updateDeviceTrust(id, trustStatus);
+  }
 }

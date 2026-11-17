@@ -376,3 +376,52 @@ model AuditLog {
 
   @@map("audit_logs")
 }
+
+enum DeviceTrust {
+  TRUSTED
+  UNKNOWN
+  UNTRUSTED
+  BLOCKED
+}
+
+model Device {
+  id                String      @id @default(uuid()) @db.Uuid
+  userId            String      @map("user_id") @db.Uuid
+  deviceFingerprint String      @map("device_fingerprint")
+  name              String
+  os                String?
+  browser           String?
+  trustStatus       DeviceTrust @default(UNKNOWN) @map("trust_status")
+  lastActivity      DateTime    @default(now()) @map("last_activity")
+  createdAt         DateTime    @default(now()) @map("created_at")
+
+  @@map("devices")
+}
+
+enum ModelType {
+  PREDICTIVE_MAINTENANCE
+  ANOMALY_DETECTION
+  INTRUSION_DETECTION
+}
+
+enum ModelStatus {
+  TRAINING
+  STAGED
+  DEPLOYED
+  RETIRED
+}
+
+model MLModel {
+  id          String      @id @default(uuid()) @db.Uuid
+  name        String
+  type        ModelType
+  version     String
+  algorithm   String
+  description String?
+  status      ModelStatus @default(STAGED)
+  metricsJson Json?       @map("metrics_json")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@map("ml_models")
+}

@@ -83,7 +83,7 @@ export default function AIOverviewPage() {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6">
-          <h1 className="text-xl font-semibold text-white">AI Intelligence Overview</h1>
+          <div className="flex items-center space-x-3"><h1 className="text-xl font-semibold text-white">AI Intelligence Overview</h1><Link href="/ai/models" className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-sm rounded-lg transition-colors">Model Registry</Link></div>
           <div className="flex items-center space-x-4">
             <button className="relative p-2 text-slate-400 hover:text-white transition-colors">
               <Bell className="w-5 h-5" />
@@ -186,3 +186,4 @@ export default function AIOverviewPage() {
     </div>
   );
 }
+

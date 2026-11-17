@@ -81,7 +81,7 @@ export default function ZeroTrustPage() {
           <Link href="/security" className="text-slate-400 hover:text-white mr-4 transition-colors">
             ? Back
           </Link>
-          <h1 className="text-xl font-semibold text-white">Zero Trust Policies</h1>
+          <div className="flex items-center space-x-3"><h1 className="text-xl font-semibold text-white">Zero Trust Policies</h1><Link href="/security/access-decisions" className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-lg transition-colors">Access Decisions</Link><Link href="/security/device-trust" className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-sm rounded-lg transition-colors">Device Trust</Link></div>
         </div>
         <button onClick={() => setShowForm(true)} className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors">
           <Plus className="w-4 h-4 mr-2" /> Add Policy
@@ -221,3 +221,5 @@ export default function ZeroTrustPage() {
     </div>
   );
 }
+
+
