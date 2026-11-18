@@ -92,4 +92,21 @@ export class AssetsService {
       totalPredictions: predictions.length,
     };
   }
+
+  async update(id: string, data: any) {
+    const asset = await this.prisma.asset.findUnique({ where: { id } });
+    if (!asset) throw new NotFoundException('Asset not found');
+
+    return this.prisma.asset.update({
+      where: { id },
+      data: {
+        name: data.name,
+        type: data.type,
+        criticality: data.criticality,
+        status: data.status,
+        location: data.location,
+        installationDate: data.installationDate ? new Date(data.installationDate) : null,
+      },
+    });
+  }
 }

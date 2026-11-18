@@ -24,4 +24,9 @@ export class ModelsController {
   async updateStatus(@Param('id') id: string, @Body('status') status: string) {
     return this.modelsService.updateStatus(id, status);
   }
+
+  @Get(':id/evaluations')
+  async getEvaluations(@Param('id') id: string) {
+    return this.modelsService.getEvaluations(id);
+  }
 }

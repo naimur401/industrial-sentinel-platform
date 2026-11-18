@@ -39,4 +39,11 @@ export class ModelsService {
       data: { status: status as any },
     });
   }
+
+  async getEvaluations(modelId: string) {
+    return this.prisma.modelEvaluation.findMany({
+      where: { modelId },
+      orderBy: { evaluatedAt: 'desc' },
+    });
+  }
 }

@@ -66,6 +66,12 @@ export default function ModelDetailsPage() {
                   <span className={'px-2 py-1 rounded text-xs border ' + statusColors[model.status]}>
                     {model.status}
                   </span>
+                  <button 
+                    onClick={() => router.push('/ai/models/' + model.id + '/evaluation')} 
+                    className="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium rounded-lg transition-colors ml-2"
+                  >
+                    View Evaluation
+                  </button>
                 </div>
                 <p className="text-slate-400">{model.description}</p>
                 <div className="flex items-center space-x-4 mt-3 text-sm text-slate-500">

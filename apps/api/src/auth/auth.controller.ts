@@ -16,7 +16,6 @@ export class AuthController {
 
   @Get('profile/:userId')
   async getProfile(@Req() req: any) {
-    // Get userId from Authorization header token
     const authHeader = req.headers.authorization;
     if (!authHeader) throw new UnauthorizedException('No token');
     const token = authHeader.split(' ')[1];
@@ -41,4 +40,20 @@ export class AuthController {
     const decoded: any = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
     return this.authService.changePassword(decoded.sub, body.oldPassword, body.newPassword);
   }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body('email') email: string) {
+    return this.authService.forgotPassword(email);
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() body: { token: string; newPassword: string }) {
+    return this.authService.resetPassword(body.token, body.newPassword);
+  }
+
+  @Post('verify-mfa')
+  async verifyMFA(@Body() body: { userId: string; code: string }) {
+    return this.authService.verifyMFA(body.userId, body.code);
+  }
 }
+

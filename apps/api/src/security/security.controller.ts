@@ -29,4 +29,9 @@ export class SecurityController {
   async updateNotes(@Param('id') id: string, @Body('notes') notes: string) {
     return this.securityService.updateNotes(id, notes);
   }
+
+  @Get('network-monitoring')
+  async getNetworkMonitoring() {
+    return this.securityService.getNetworkMonitoring();
+  }
 }

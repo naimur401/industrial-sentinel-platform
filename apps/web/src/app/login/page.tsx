@@ -24,10 +24,12 @@ export default function LoginPage() {
         password,
       });
 
+      // Store token and user
       Cookies.set('token', res.data.access_token, { expires: 1 });
       Cookies.set('user', JSON.stringify(res.data.user), { expires: 1 });
 
-      router.push('/dashboard');
+      // Redirect to MFA page
+      router.push('/mfa');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
     } finally {
@@ -86,6 +88,10 @@ export default function LoginPage() {
             </div>
           </div>
 
+          <div className="flex justify-end">
+            <a href="/forgot-password" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">Forgot password?</a>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -102,3 +108,6 @@ export default function LoginPage() {
     </div>
   );
 }
+
+
+

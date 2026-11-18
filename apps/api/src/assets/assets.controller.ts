@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param } from '@nestjs/common';
 import { AssetsService } from './assets.service';
 
 @Controller('assets')
@@ -38,5 +38,10 @@ export class AssetsController {
   @Post()
   async create(@Body() body: any) {
     return this.assetsService.create(body);
+  }
+
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() body: any) {
+    return this.assetsService.update(id, body);
   }
 }

@@ -37,4 +37,46 @@ export class SecurityService {
       data: { description: notes },
     });
   }
+
+  async getNetworkMonitoring() {
+    // Simulated network traffic data
+    const protocols = [
+      { protocol: 'TCP', percentage: 65, connections: 1250 },
+      { protocol: 'UDP', percentage: 25, connections: 480 },
+      { protocol: 'ICMP', percentage: 5, connections: 95 },
+      { protocol: 'Other', percentage: 5, connections: 96 },
+    ];
+
+    // Simulated suspicious activity
+    const suspiciousActivity = [
+      { source: '203.0.113.42', type: 'Port Scan', severity: 'HIGH', timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString() },
+      { source: '192.168.1.105', type: 'SQL Injection Attempt', severity: 'CRITICAL', timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString() },
+      { source: '10.0.0.22', type: 'Brute Force Login', severity: 'HIGH', timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString() },
+      { source: '198.51.100.7', type: 'Malware Traffic', severity: 'CRITICAL', timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString() },
+      { source: '172.16.0.4', type: 'DDoS Attempt', severity: 'LOW', timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString() },
+    ];
+
+    // Simulated traffic over time (last 24h)
+    const trafficHistory = Array.from({ length: 24 }, (_, i) => {
+      const hour = new Date();
+      hour.setHours(hour.getHours() - (23 - i));
+      return {
+        time: hour.getHours() + ':00',
+        inbound: 50 + Math.random() * 150,
+        outbound: 30 + Math.random() * 100,
+      };
+    });
+
+    return {
+      summary: {
+        totalConnections: 1921,
+        activeConnections: 245,
+        blockedRequests: 87,
+        bandwidthUsage: 68.5,
+      },
+      protocols,
+      suspiciousActivity,
+      trafficHistory,
+    };
+  }
 }

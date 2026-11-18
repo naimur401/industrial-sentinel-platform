@@ -98,7 +98,7 @@ export default function SecurityOverviewPage() {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6">
-          <div className="flex items-center space-x-4"><h1 className="text-xl font-semibold text-white">Security Overview</h1><Link href="/security/zero-trust" className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-sm rounded-lg transition-colors">Zero Trust</Link><Link href="/security/audit-logs" className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition-colors">Audit Logs</Link></div>
+          <div className="flex items-center space-x-4"><h1 className="text-xl font-semibold text-white">Security Overview</h1><Link href="/security/zero-trust" className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-sm rounded-lg transition-colors">Zero Trust</Link><Link href="/security/audit-logs" className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition-colors">Audit Logs</Link><Link href="/security/network-monitoring" className="px-3 py-1.5 bg-orange-600 hover:bg-orange-500 text-white text-sm rounded-lg transition-colors">Network Monitoring</Link></div>
           <div className="flex items-center space-x-4">
             <button className="relative p-2 text-slate-400 hover:text-white transition-colors">
               <Bell className="w-5 h-5" />
@@ -193,6 +193,7 @@ export default function SecurityOverviewPage() {
     </div>
   );
 }
+
 
 
 
