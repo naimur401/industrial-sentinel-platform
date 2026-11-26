@@ -1,0 +1,10 @@
+RUL Prediction Model Evaluation
+================================
+Algorithm: XGBoost
+Training Samples: 3200
+Testing Samples: 800
+Features: ['temperature', 'vibration', 'pressure']
+
+MAE:  12.44
+RMSE: 16.76
+R2:   0.9188
