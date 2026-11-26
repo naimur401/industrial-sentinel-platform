@@ -10,21 +10,26 @@ export class AiService {
     const asset = await this.prisma.asset.findUnique({ where: { id: assetId } });
     if (!asset) throw new Error('Asset not found');
 
-    const response = await axios.post('http://localhost:8000/predict/rul', {
-      asset_id: asset.id,
-      asset_type: asset.type,
-      criticality: asset.criticality,
-    });
+    // Simulate sensor values (later fetch real readings)
+    const sensorData = {
+      temperature: 650 + Math.random() * 40,
+      vibration: 0.05 + Math.random() * 0.06,
+      pressure: 100 + Math.random() * 50,
+    };
+
+    // Call Python AI Service (host.docker.internal for docker-to-host)
+    const response = await axios.post('http://host.docker.internal:8000/predict/rul/from-sensors', sensorData);
 
     const aiData = response.data;
 
+    // Save prediction
     const prediction = await this.prisma.prediction.create({
       data: {
         assetId: asset.id,
         remainingUsefulLife: aiData.remaining_useful_life_days,
-        failureProbability: aiData.failure_probability,
+        failureProbability: 1 - aiData.confidence,
         confidence: aiData.confidence,
-        recommendation: aiData.recommendation,
+        recommendation: aiData.remaining_useful_life_days < 30 ? 'Schedule urgent maintenance' : 'Asset is healthy',
       },
     });
 

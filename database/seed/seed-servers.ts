@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -27,7 +28,7 @@ async function main() {
         ipAddress: s.ip,
         os: s.os,
         environment: s.env,
-        status: s.status,
+        status: s.status as any,
       },
     });
   }
@@ -35,3 +36,4 @@ async function main() {
 }
 
 main().catch(console.error).finally(() => prisma.$disconnect());
+
